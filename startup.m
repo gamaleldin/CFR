@@ -10,6 +10,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 path(sprintf('%s/genCFR', pwd), path) % Adds the subdirectories of the root folder to the path, allowing us to call functions from them.
 path(sprintf('%s/util', pwd), path) % Adds the subdirectories of the root folder to the path, allowing us to call functions from them.
+path(sprintf('%s/util/lbfgsb', pwd), path) % Adds the subdirectories of the root folder to the path, allowing us to call functions from them.
 path(sprintf('%s/test', pwd), path) % Adds the subdirectories of the root folder to the path, allowing us to call functions from them.
 path(sprintf('%s/data', pwd), path) % Adds the subdirectories of the root folder to the path, allowing us to call functions from them.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
