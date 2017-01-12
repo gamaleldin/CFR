@@ -6,6 +6,8 @@
 % This is a demonstration of how to use this code package 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 startup
+% this data is a preprocessed version of the data available online from 
+% http://stat.columbia.edu/~cunningham/pdf/ChurchlandNature2012_code.zip
 load exampleData.mat
 %% quantify the linear dynmaical structure of original data by a summary statistic (R2)
 model_dim = 10;
