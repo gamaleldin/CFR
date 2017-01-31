@@ -16,7 +16,6 @@ if exist('params','var')
     if isfield(params, 'readout_mode')
         readout_mode = params.readout_mode;
     end
-    
 end
 
 %% Generate surrogates
