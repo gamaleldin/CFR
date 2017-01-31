@@ -1,4 +1,4 @@
-function [surrTensorOut, f] = optMarginalCovTNC(surrTensor, targetSigma_T, targetSigma_N, targetSigma_C)
+function [surrTensorOut, f, K] = optMarginalCovTNC(surrTensor, targetSigma_T, targetSigma_N, targetSigma_C)
 [T, N, C] = size(surrTensor);
 meanN = sumTensor(surrTensor, [1 3])/(C*T);
 surrTensor = bsxfun(@minus, surrTensor, meanN);
