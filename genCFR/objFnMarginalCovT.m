@@ -1,6 +1,7 @@
 function [f, gradf, gradf_unc] = objFnMarginalCovT(K, varargin)
 
-
+surrTensor = varargin{1};
+targetSigma_T = varargin{2};
 [f, ~, gradf_unc] = objFnMarginalCovOther(K, permute(surrTensor, [2, 1, 3]), targetSigma_T);
 
 % surrTensor = varargin{1};
