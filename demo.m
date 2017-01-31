@@ -18,10 +18,10 @@ times_msk = t>-50 & t<350; % select movement-related times
 %% sample many surrogates and build null distribution of summary statistics
 numSurrogates = 100;
 params = [];
+params.readout_mode = 2;         % select readout mode
 params.margCov{1} = targetSigmaT;
 params.margCov{2} = targetSigmaN;
 params.margCov{3} = targetSigmaC;
-params.surrType = 'TNC';
 params.meanTensor = M.TNC;
 R2_surr = nan(numSurrogates, 1);
 for i = 1:numSurrogates
