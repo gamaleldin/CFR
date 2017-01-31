@@ -7,12 +7,12 @@
 % performed across neurons and conditions.
 % cyclicShfl: if true the shuffle is performed cyclicly.
 %%              
-function shuffledTensor = shfl(origTensor, shflAcross, cyclicShfl)
+function shuffledTensor = shfl(origTensor, shfl_mode, cyclicShfl)
 [T, N, C] = size(origTensor);
 shuffledTensor = origTensor;
 
 %% shuffle across times
-if shflAcross(1)
+if shfl_mode == 1;
     parfor n = 1:N
         if cyclicShfl
             startTime = randi(T);
@@ -26,7 +26,7 @@ if shflAcross(1)
     end
 end
 %%
-if shflAcross(2)
+if shfl_mode==2
     parfor c = 1:C
         if cyclicShfl
             startNeu = randi(N);
@@ -40,7 +40,7 @@ if shflAcross(2)
     end
 end
 %% shuffle across conditions
-if shflAcross(3)
+if shfl_mode ==3
     parfor n = 1:N
         if cyclicShfl
             startCond = randi(C);

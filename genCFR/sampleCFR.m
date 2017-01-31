@@ -1,42 +1,46 @@
 function [surrTensor, f] = sampleCFR(dataTensor, params)
-shflAcross = [0 0 1]; % [times, neurons conditions]
+readout_mode = 1;
+shfl_mode = 3;
 cyclicShfl = true;
-surrType = 'TNC';
-targetSigmaT = params.margCov{1};
-targetSigmaN = params.margCov{2};
-targetSigmaC = params.margCov{3};
+margCov = params.margCov;
 meanTensor = params.meanTensor;
+dims = size(dataTensor);
+tensorIxs = 1:length(dims);
 if exist('params','var')
-    if isfield(params, 'surrType')
-        surrType = params.surrType;
-    end
     if isfield(params, 'cyclicShfl')
         cyclicShfl = params.cyclicShfl;
     end
-    if isfield(params, 'shflAcross')
-        shflAcross = params.shflAcross;
+    if isfield(params, 'shfl_mode')
+        shfl_mode = params.shfl_mode;
     end
+    if isfield(params, 'readout_mode')
+        readout_mode = params.readout_mode;
+    end
+    
 end
-[T, N, C] = size(dataTensor);
+
 %% Generate surrogates
-switch surrType
-    case 'T'
-    %%%%%%% generate surrogate-T
-    surrTensor0 = shfl(dataTensor(:,:, randperm(C)), shflAcross, cyclicShfl);
-    [surrTensor, f] = optMarginalCovT(surrTensor0, targetSigmaT);
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    case 'TN'
-    surrTensor0 = shfl(dataTensor(:,:, randperm(C)), shflAcross, cyclicShfl);
-    %%%%%%% generate surrogate-TN
-    [surrTensor, f] = optMarginalCovTN(surrTensor0, targetSigmaT , targetSigmaN);
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    case 'TNC'
-    surrTensor0 = shfl(dataTensor, shflAcross, cyclicShfl);
-    %%%%%%% generate surrogate-TNC
-    [surrTensor, f] = optMarginalCovTNC(surrTensor0, targetSigmaT , targetSigmaN, targetSigmaC);
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 1- shuffling step
+surrTensor0 = shfl(dataTensor, shfl_mode, cyclicShfl);  % shuffle data
+%% 2- correction step
+% make readout mode first
+reorderIx = [readout_mode, sort(tensorIxs(tensorIxs ~= readout_mode))]; 
+% if not optimizing readout mode marginal cov
+if readout_mode>length(margCov)
+    for i = length(margCov)+1:-1:2
+        margCov{i} = margCov{i-1};
+    end
+    margCov{1} = [];
+% if optimizing readout mode marginal cov
+else
+    margCov = margCov(reorderIx);
 end
-surrTensor = surrTensor+meanTensor;
+[surrTensor, f, K] = optMarginalCov(permute(surrTensor0, reorderIx), margCov);
+[~, ix]=sort(reorderIx);
+surrTensor = permute(surrTensor, ix);% put back in the original order
+
+%% add mean tensor
+surrTensor = surrTensor+meanTensor;  
 fprintf('cost (initial->final): %.4f -> %.4f \n', f(1), f(end));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 end
