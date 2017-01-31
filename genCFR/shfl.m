@@ -7,51 +7,28 @@
 % performed across neurons and conditions.
 % cyclicShfl: if true the shuffle is performed cyclicly.
 %%              
-function shuffledTensor = shfl(origTensor, shfl_mode, cyclicShfl)
-[T, N, C] = size(origTensor);
+function shuffledTensor = shfl(origTensor, shfl_mode, fix_mode, cyclicShfl)
 shuffledTensor = origTensor;
+dims = size(origTensor);
+tensorIxs = 1:length(dims);
 
-%% shuffle across times
-if shfl_mode == 1;
-    parfor n = 1:N
-        if cyclicShfl
-            startTime = randi(T);
-            ts = [startTime:T, 1:startTime-1];
-        else
-            ts = randperm(T);
-        end
-        A = shuffledTensor(:, n, :);
-        A = A(ts, 1, :);  
-        shuffledTensor(:, n, :) = A;
+T = dims(shfl_mode);
+N = dims(fix_mode);
+reorderIx = [fix_mode, shfl_mode, sort(tensorIxs(tensorIxs ~= fix_mode & tensorIxs ~= shfl_mode))]; 
+shuffledTensor = reshape(permute(shuffledTensor, reorderIx), dims(fix_mode), dims(shfl_mode), []);
+
+parfor n = 1:N
+    if cyclicShfl
+        st = randi(T);
+        ts = [st:T, 1:st-1];
+    else
+        ts = randperm(T);
     end
+    A = shuffledTensor(n, :, :);
+    shuffledTensor(n, :, :) = A(1, ts, :);
 end
-%%
-if shfl_mode==2
-    parfor c = 1:C
-        if cyclicShfl
-            startNeu = randi(N);
-            ns = [startNeu:N, 1:startNeu-1];
-        else
-            ns = randperm(N);
-        end
-        A = shuffledTensor(:, :, c);
-        A = A(:, ns, 1);  
-        shuffledTensor(:, :, c) = A;
-    end
-end
-%% shuffle across conditions
-if shfl_mode ==3
-    parfor n = 1:N
-        if cyclicShfl
-            startCond = randi(C);
-            cs = [startCond:C, 1:startCond-1];
-        else
-            cs = randperm(C);
-        end
-        A = shuffledTensor(:, n, :);
-        A = A(:, 1, cs);  
-        shuffledTensor(:, n, :) = A;
-    end
-end
+shuffledTensor = reshape(shuffledTensor, [N, T, dims(tensorIxs ~= fix_mode & tensorIxs ~= shfl_mode)]);
+[~, ix]=sort(reorderIx);
+shuffledTensor = permute(shuffledTensor, ix);% put back in the original order
 
 end
