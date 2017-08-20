@@ -47,9 +47,9 @@ This code package is for the Corrected-Fisher-Randomization (CFR) method. This m
 The BibTeX citations for the primary papers used in this project are:
 
 @article{elsayed,
-title={Structure in Neural Population Responses: Interesting or Epiphenomenal?},
-author={Elsayed et al.},
-journal={},
+title={Structure in neural population recordings: an expected byproduct of simpler phenomena?},
+author={Gamaleldin Elsayed},
+journal={Nature Neuroscience},
 volume={},
 year={}
 }
