@@ -17,10 +17,14 @@ dims = size(surrTensor);
 tensorIxs = 2:length(dims); %excluding the readout mode
     
 for i = 2:length(margCov)
-    reorderIx = [1, i, sort(tensorIxs(tensorIxs ~= i))]; % make desidred mode second mode;    
-    [fi, gradfi] = objFnOther(K, permute(surrTensor, reorderIx), margCov{i});
-    f = f + fi;
-    gradf = gradf + gradfi;
+    if ~isempty(margCov{i}) 
+        reorderIx = [1, i, sort(tensorIxs(tensorIxs ~= i))]; % make desidred mode second mode;    
+        [fi, gradfi] = objFnOther(K, permute(surrTensor, reorderIx), margCov{i});
+        f = f + fi;
+        gradf = gradf + gradfi;
+    else
+        normFactor = normFactor-1;
+    end
 end
 f = f/normFactor;
 gradf = gradf/normFactor;

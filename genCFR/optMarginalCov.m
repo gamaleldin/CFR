@@ -9,9 +9,10 @@ K = K*(eye(N)-ones(N)./N);
 maxIter = 100;
 params.surrTensor = surrTensor;   %
 params.margCov = margCov;
-
-[K, f] = minimize(K ,'objFnMarginalCov' , maxIter, params);
-
+f = 0;
+if sum(~cellfun(@isempty, margCov)) > 0
+    [K, f] = minimize(K ,'objFnMarginalCov' , maxIter, params);
+end
 %%
 surrTensorOut = reshape(K.'*reshape(surrTensor, N, []), [N, dims(2:end)]);
 end
