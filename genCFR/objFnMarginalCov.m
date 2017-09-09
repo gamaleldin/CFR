@@ -4,26 +4,22 @@
 function [f, gradf] = objFnMarginalCov(K, params)
 surrTensor = params.surrTensor;   %
 margCov = params.margCov;
-normFactor = length(margCov);
+normFactor = sum(~cellfun(@isempty, margCov));
 f =0;
 gradf = 0;
 if ~isempty(margCov{1})
    [f, gradf] = objFnReadOut(K, surrTensor, margCov{1});
-else
-    normFactor = normFactor-1; % we are not optimizing the marginal covariance of the readout mode
 end
 dims = size(surrTensor);
 
 tensorIxs = 2:length(dims); %excluding the readout mode
     
-for i = 2:length(margCov)
+for i = tensorIxs
     if ~isempty(margCov{i}) 
         reorderIx = [1, i, sort(tensorIxs(tensorIxs ~= i))]; % make desidred mode second mode;    
         [fi, gradfi] = objFnOther(K, permute(surrTensor, reorderIx), margCov{i});
         f = f + fi;
         gradf = gradf + gradfi;
-    else
-        normFactor = normFactor-1;
     end
 end
 f = f/normFactor;

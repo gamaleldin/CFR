@@ -29,17 +29,7 @@ surrTensor0 = shfl(dataTensor, shfl_mode, fix_mode, cyclicShfl);  % shuffle data
 %% 2- correction step
 % make readout mode first
 reorderIx = [readout_mode, sort(tensorIxs(tensorIxs ~= readout_mode))]; 
-% if not optimizing readout mode marginal cov
-if readout_mode>length(margCov)
-    for i = length(margCov)+1:-1:2
-        margCov{i} = margCov{i-1};
-    end
-    margCov{1} = [];
-% if optimizing readout mode marginal cov
-else
-    margCov = margCov(reorderIx);
-end
-[surrTensor, f, K] = optMarginalCov(permute(surrTensor0, reorderIx), margCov);
+[surrTensor, f, K] = optMarginalCov(permute(surrTensor0, reorderIx), margCov(reorderIx));
 [~, ix]=sort(reorderIx);
 surrTensor = permute(surrTensor, ix);% put back in the original order
 
